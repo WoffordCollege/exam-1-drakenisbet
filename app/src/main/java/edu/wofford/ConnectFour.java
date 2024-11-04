@@ -113,8 +113,7 @@ public class ConnectFour {
      */
     public Location getTopOfColumn(int column) {
         // Question 1
-        // TODO
-        
+
         return Location.EMPTY;
     }
     
