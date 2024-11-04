@@ -108,12 +108,16 @@ public class ConnectFour {
      * return EMPTY. Otherwise, it should return either
      * RED or BLACK.
      * 
-     * @param column the column to check
-     * @return the top of the column
+     * @param column the column to check.
+     * @return the top of the column.
      */
     public Location getTopOfColumn(int column) {
         // Question 1
-
+        for (int row = 0; row < board.length; row++) {
+            if (board[row][column] != Location.EMPTY) {
+                return board[row][column]; // returns the token found at the top
+            }
+        }
         return Location.EMPTY;
     }
     
@@ -122,14 +126,18 @@ public class ConnectFour {
      * If the column is empty, this returns a 0. The maximum
      * value that this function can return is 6.
      * 
-     * @param column the column to check
-     * @return the height of the column
+     * @param column the column to check.
+     * @return the height of the column.
      */
     public int getHeightOfColumn(int column) {
         // Question 2
-        // TODO
-        
-        return 0;
+        int height = 0; // initialize the height counter
+        for (int row = 0; row < board.length; row++) {
+            if (board[row][column] != Location.EMPTY) {
+                height++;
+            }
+        }
+        return height; // returns the total height of the column
     }
     
     /**
@@ -140,12 +148,29 @@ public class ConnectFour {
      * player's turn). If the column is full, it should throw a
      * ColumnFullException (but the player should also not lose their turn).
      * 
-     * @param column the column for the token
+     * @param column the column for the token.
      */
     public void dropToken(int column) {
         // Question 3
-        // TODO
+
+        // checks if the column is within the valid range
+        if (column < 0 || column >= board[0].length) {
+            return; // invalid column solution
+        }
         
+        // checks if the column is full
+        if (getHeightOfColumn(column) >= board.length) {
+            throw new ColumnFullException(); // column overflow solution
+        }
+        
+        // places the token in the lowest available row
+        for (int row = board.length - 1; row >= 0; row--) {
+            if (board[row][column] == Location.EMPTY) {
+                board[row][column] = redTurn ? Location.RED : Location.BLACK;
+                redTurn = !redTurn; // switches the players turn
+                return;
+            }
+        }
     }
     
     /**
@@ -155,7 +180,7 @@ public class ConnectFour {
      * or BLACKWIN, respectively. Otherwise, the result should be
      * NONE (meaning the game is not over).
      * 
-     * @return the current result of the game
+     * @return the current result of the game.
      */
     public Result getResult() {
         // Question 4
@@ -168,8 +193,17 @@ public class ConnectFour {
         //       this class to determine whether someone has won 
         //       along a column.
         
-        // TODO
-        
+        // checks for vertical wins for both RED and BLACK
+        for (int col = 0; col < board[0].length; col++) {
+            String columnString = getColumnAsString(col);
+            if (columnString.contains("RRRR")) {
+                return Result.REDWIN;
+            }
+            if (columnString.contains("BBBB")) {
+                return Result.BLACKWIN;
+            }
+        }
+
         return Result.NONE;
     }
     
@@ -187,14 +221,26 @@ public class ConnectFour {
      * 
      * Here, "B" and "R" mark the black and red tokens in each column.
      * 
-     * @return a string representing the board
+     * @return a string representing the board.
      */
     public String toString() {
         // Question 5
-        // TODO
-        
-        return "";
+        StringBuilder boardString = new StringBuilder();
+        for (int row = 0; row < board.length; row++) {
+            boardString.append("|");
+
+            for (int col = 0; col < board[row].length; col++) {
+                if (board[row][col] == Location.RED) {
+                    boardString.append("R|");
+                } else if (board[row][col] == Location.BLACK) {
+                    boardString.append("B|");
+                } else {
+                    boardString.append(" |");
+                }
+            }
+            boardString.append("\n");
+        }
+        boardString.append("---------------");
+        return boardString.toString();
     }
-
-
 }
